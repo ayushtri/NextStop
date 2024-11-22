@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NextStopApp.Models;
+﻿using NextStopApp.Models;
+using Microsoft.EntityFrameworkCore;
+using NextStopApp.DTOs;
 
 namespace NextStopApp.Data
 {
@@ -14,6 +15,8 @@ namespace NextStopApp.Data
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<AdminAction> AdminActions { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
 
         public NextStopDbContext() { }
         public NextStopDbContext(DbContextOptions<NextStopDbContext> options) : base(options) { }
