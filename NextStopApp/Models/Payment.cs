@@ -23,6 +23,6 @@ namespace NextStopApp.Models
         public string PaymentStatus { get; set; }
 
         // Navigation properties
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
     }
 }

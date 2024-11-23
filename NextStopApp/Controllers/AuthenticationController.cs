@@ -5,6 +5,7 @@ using NextStopApp.DTOs;
 using NextStopApp.Models;
 using NextStopApp.Repositories;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,7 +27,7 @@ namespace NextStopApp.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
             if (!ModelState.IsValid)
@@ -42,6 +43,11 @@ namespace NextStopApp.Controllers
                     return Unauthorized("Invalid email or password");
                 }
 
+                if (!user.IsActive)
+                {
+                    return BadRequest("User account is deactivated");
+                }
+
                 var accessToken = IssueAccessToken(user);
 
                 var refreshToken = GenerateRefreshToken();
@@ -55,9 +61,13 @@ namespace NextStopApp.Controllers
             }
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO createUserDto)
         {
+            if (string.IsNullOrEmpty(createUserDto.Role))
+            {
+                createUserDto.Role = "passenger";
+            }
 
             if (string.IsNullOrEmpty(createUserDto.Email))
             {
@@ -84,7 +94,8 @@ namespace NextStopApp.Controllers
                     Email = createdUser.Email,
                     Phone = createdUser.Phone,
                     Address = createdUser.Address,
-                    Role = createdUser.Role
+                    Role = createdUser.Role,
+                    IsActive = createdUser.IsActive
                 };
 
                 return Ok(new { token = token, user = userDto });
@@ -189,5 +200,38 @@ namespace NextStopApp.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.RefreshToken))
+            {
+                return BadRequest("Refresh token is required.");
+            }
+
+            try
+            {
+                var email = await _tokenService.RetrieveEmailByRefreshToken(request.RefreshToken);
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Unauthorized("Invalid refresh token.");
+                }
+
+                var isRevoked = await _tokenService.RevokeRefreshToken(request.RefreshToken);
+
+                if (!isRevoked)
+                {
+                    return NotFound("Refresh token not found or already revoked.");
+                }
+
+                return Ok("User logged out successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

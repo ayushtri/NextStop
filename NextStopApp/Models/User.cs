@@ -32,6 +32,9 @@ namespace NextStopApp.Models
         [RegularExpression("^(passenger|operator|admin)$", ErrorMessage = "Role must be 'passenger', 'operator', or 'admin'.")]
         public string Role { get; set; }
 
+        [Required]
+        public bool IsActive { get; set; } = true; // Default to active
+
         // Navigation properties
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<AdminAction> AdminActions { get; set; }

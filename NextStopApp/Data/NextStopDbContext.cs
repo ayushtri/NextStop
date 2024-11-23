@@ -30,6 +30,8 @@ namespace NextStopApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().HasQueryFilter(u => u.IsActive);
+
             // User Entity
             modelBuilder.Entity<User>()
                 .HasKey(u => u.UserId);
@@ -96,6 +98,10 @@ namespace NextStopApp.Data
                 .HasForeignKey(s => s.RouteId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Models.Route>()
+                .Property(r => r.Distance)
+                .HasPrecision(18, 2);
+
             // Schedule Entity
             modelBuilder.Entity<Schedule>()
                 .HasKey(s => s.ScheduleId);
@@ -106,7 +112,13 @@ namespace NextStopApp.Data
                 .HasForeignKey(b => b.ScheduleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Schedule>()
+                .Property(s => s.Fare)
+                .HasPrecision(18, 2);
+
             // Booking Entity
+            modelBuilder.Entity<Booking>().HasQueryFilter(b => b.User == null || b.User.IsActive);
+
             modelBuilder.Entity<Booking>()
                 .HasKey(b => b.BookingId);
 
@@ -128,6 +140,10 @@ namespace NextStopApp.Data
                 .HasForeignKey(s => s.BookingId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Booking>()
+                .Property(b => b.TotalFare)
+                .HasPrecision(18, 2);
+
             // Seat Entity
             modelBuilder.Entity<Seat>()
                 .HasKey(s => s.SeatId);
@@ -146,9 +162,12 @@ namespace NextStopApp.Data
                 .HasOne(s => s.Booking)
                 .WithMany(b => b.Seats)
                 .HasForeignKey(s => s.BookingId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Payment Entity
+            modelBuilder.Entity<Payment>()
+                .HasQueryFilter(p => p.Booking == null || p.Booking.User == null || p.Booking.User.IsActive);
+
             modelBuilder.Entity<Payment>()
                 .HasKey(p => p.PaymentId);
 
@@ -156,6 +175,10 @@ namespace NextStopApp.Data
                 .Property(p => p.PaymentStatus)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasPrecision(18, 2);
 
             // AdminAction Entity
             modelBuilder.Entity<AdminAction>()

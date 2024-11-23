@@ -26,7 +26,7 @@ namespace NextStopApp.Models
         public string Status { get; set; }
 
         // Navigation properties
-        public User User { get; set; }
+        public User? User { get; set; }
         public Schedule Schedule { get; set; }
         public ICollection<Seat> Seats { get; set; }
         public Payment Payment { get; set; }

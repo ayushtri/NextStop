@@ -28,5 +28,6 @@ namespace NextStopApp.DTOs
         [StringLength(50)]
         [RegularExpression("^(passenger|operator|admin)$", ErrorMessage = "Role must be 'passenger', 'operator', or 'admin'.")]
         public string Role { get; set; }
+
     }
 }
