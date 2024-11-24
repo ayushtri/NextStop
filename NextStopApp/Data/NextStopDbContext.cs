@@ -59,6 +59,10 @@ namespace NextStopApp.Data
                 .HasKey(o => o.OperatorId);
 
             modelBuilder.Entity<BusOperator>()
+                .HasIndex(o => o.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<BusOperator>()
                 .HasMany(o => o.Buses)
                 .WithOne(b => b.Operator)
                 .HasForeignKey(b => b.OperatorId)
@@ -67,6 +71,10 @@ namespace NextStopApp.Data
             // Bus Entity
             modelBuilder.Entity<Bus>()
                 .HasKey(b => b.BusId);
+
+            modelBuilder.Entity<Bus>()
+                .HasIndex(b => b.BusNumber)
+                .IsUnique();
 
             modelBuilder.Entity<Bus>()
                 .HasIndex(b => b.BusNumber)

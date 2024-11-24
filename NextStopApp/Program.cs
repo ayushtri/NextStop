@@ -45,6 +45,9 @@ namespace NextStopApp
 
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IBusService, BusService>();
+            builder.Services.AddScoped<IRouteService, RouteService>();
+            builder.Services.AddScoped<ISchedulesService, SchedulesService>();
 
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
