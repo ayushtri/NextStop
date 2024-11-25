@@ -48,6 +48,10 @@ namespace NextStopApp
             builder.Services.AddScoped<IBusService, BusService>();
             builder.Services.AddScoped<IRouteService, RouteService>();
             builder.Services.AddScoped<ISchedulesService, SchedulesService>();
+            builder.Services.AddScoped<ISeatsService, SeatsService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+
 
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
