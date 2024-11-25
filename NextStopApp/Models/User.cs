@@ -38,5 +38,6 @@ namespace NextStopApp.Models
         // Navigation properties
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<AdminAction> AdminActions { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
     }
 }

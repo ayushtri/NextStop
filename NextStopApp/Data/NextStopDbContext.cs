@@ -16,6 +16,8 @@ namespace NextStopApp.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<AdminAction> AdminActions { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
 
 
         public NextStopDbContext() { }
@@ -53,6 +55,7 @@ namespace NextStopApp.Data
                 .WithOne(a => a.Admin)
                 .HasForeignKey(a => a.AdminId)
                 .OnDelete(DeleteBehavior.SetNull);
+
 
             // BusOperator Entity
             modelBuilder.Entity<BusOperator>()
@@ -200,6 +203,13 @@ namespace NextStopApp.Data
                 .HasOne(a => a.Admin)
                 .WithMany(u => u.AdminActions)
                 .HasForeignKey(a => a.AdminId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            //Notification
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
 

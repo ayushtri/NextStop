@@ -51,14 +51,14 @@ namespace NextStopApp
             builder.Services.AddScoped<ISeatsService, SeatsService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
-
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             builder.Services.AddEndpointsApiExplorer();
 
-            //builder.Services.AddSwaggerGen();
             //builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(opt =>
             {

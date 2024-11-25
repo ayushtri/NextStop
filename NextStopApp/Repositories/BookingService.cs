@@ -38,7 +38,8 @@ namespace NextStopApp.Repositories
         public async Task<BookingDTO> BookTicket(BookTicketDTO bookTicketDto)
         {
             // Validate the schedule exists
-            var schedule = await _context.Schedules.Include(s => s.Bus)
+            var schedule = await _context.Schedules
+                .Include(s => s.Bus)
                 .FirstOrDefaultAsync(s => s.ScheduleId == bookTicketDto.ScheduleId);
             if (schedule == null)
                 throw new Exception("Schedule not found.");
@@ -48,20 +49,21 @@ namespace NextStopApp.Repositories
             if (user == null)
                 throw new Exception("User not found.");
 
-            // Validate seat availability
-            var unavailableSeats = await _context.Seats
-                .Where(seat => seat.BusId == schedule.BusId && bookTicketDto.SelectedSeats.Contains(seat.SeatNumber) && !seat.IsAvailable)
+            // Ensure the bus has seats available
+            var availableSeats = await _context.Seats
+                .Where(seat => seat.BusId == schedule.BusId && seat.IsAvailable)
                 .ToListAsync();
 
-            if (unavailableSeats.Any())
-                throw new Exception("Some seats are not available.");
+            if (availableSeats == null || !availableSeats.Any())
+                throw new Exception("No seats available for the specified bus.");
 
-            // Reserve seats
-            foreach (var seatNumber in bookTicketDto.SelectedSeats)
-            {
-                var seat = await _context.Seats.FirstAsync(s => s.SeatNumber == seatNumber && s.BusId == schedule.BusId);
-                seat.IsAvailable = false;
-            }
+            // Validate seat availability
+            var unavailableSeats = bookTicketDto.SelectedSeats
+                .Except(availableSeats.Select(s => s.SeatNumber))
+                .ToList();
+
+            if (unavailableSeats.Any())
+                throw new Exception($"Some seats are not available: {string.Join(", ", unavailableSeats)}");
 
             // Create booking
             var booking = new Booking
@@ -74,6 +76,19 @@ namespace NextStopApp.Repositories
             };
 
             _context.Bookings.Add(booking);
+
+            // Save changes to generate BookingId
+            await _context.SaveChangesAsync();
+
+            // Reserve seats and update BookingId in Seats table
+            foreach (var seatNumber in bookTicketDto.SelectedSeats)
+            {
+                var seat = await _context.Seats.FirstAsync(s => s.SeatNumber == seatNumber && s.BusId == schedule.BusId);
+                seat.IsAvailable = false;
+                seat.BookingId = booking.BookingId; // Assign the BookingId to the seat
+            }
+
+            // Save changes to persist seat updates
             await _context.SaveChangesAsync();
 
             return new BookingDTO
@@ -87,6 +102,7 @@ namespace NextStopApp.Repositories
                 BookingDate = booking.BookingDate
             };
         }
+
 
         public async Task<bool> CancelBooking(int bookingId)
         {
@@ -120,7 +136,7 @@ namespace NextStopApp.Repositories
                 BookingId = booking.BookingId,
                 UserId = booking.UserId,
                 ScheduleId = booking.ScheduleId,
-                ReservedSeats = booking.Seats.Select(s => s.SeatNumber).ToList(), // Return SeatNumbers instead of SeatIds
+                ReservedSeats = booking.Seats.Select(s => s.SeatNumber).ToList(), 
                 TotalFare = booking.TotalFare,
                 Status = booking.Status,
                 BookingDate = booking.BookingDate
