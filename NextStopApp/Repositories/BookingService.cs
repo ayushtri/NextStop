@@ -106,23 +106,29 @@ namespace NextStopApp.Repositories
 
         public async Task<bool> CancelBooking(int bookingId)
         {
+            // Retrieve the booking with its associated seats
             var booking = await _context.Bookings.Include(b => b.Seats)
                 .FirstOrDefaultAsync(b => b.BookingId == bookingId);
 
+            // If booking doesn't exist, return false
             if (booking == null)
                 return false;
 
+            // Set the booking status to cancelled
             booking.Status = "cancelled";
 
-            // Free up seats
+            // Free up the seats and set the BookingId to null
             foreach (var seat in booking.Seats)
             {
-                seat.IsAvailable = true;
+                seat.IsAvailable = true;  // Mark the seat as available
+                seat.BookingId = null;    // Set the BookingId to null
             }
 
+            // Save the changes to the database
             await _context.SaveChangesAsync();
             return true;
         }
+
 
         public async Task<IEnumerable<BookingDTO>> ViewBookings(int userId)
         {
