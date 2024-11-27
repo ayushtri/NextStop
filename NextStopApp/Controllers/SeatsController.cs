@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
@@ -12,6 +13,7 @@ namespace NextStopApp.Controllers
     public class SeatsController : ControllerBase
     {
         private readonly ISeatsService _seatsService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(SeatsController));
 
         public SeatsController(ISeatsService seatsService)
         {
@@ -38,6 +40,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while adding seats.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -53,6 +56,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while fetching available seats for schedule ID {scheduleId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -77,6 +81,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while reserving seats.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -101,6 +106,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while releasing seats.", ex);
                 return BadRequest(ex.Message);
             }
         }

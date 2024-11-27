@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
 using NextStopApp.Repositories;
@@ -11,6 +12,7 @@ namespace NextStopApp.Controllers
     public class AdminDashboardController : ControllerBase
     {
         private readonly IAdminDashboardService _adminDashboardService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(AdminDashboardController));
 
         public AdminDashboardController(IAdminDashboardService adminDashboardService)
         {
@@ -28,7 +30,8 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _log.Error("Error occurred while retrieving all users.", ex);
+                return StatusCode(500, "An error occurred while retrieving users. Please try again later.");
             }
         }
 
@@ -43,11 +46,14 @@ namespace NextStopApp.Controllers
                 {
                     return Ok("Role assigned successfully.");
                 }
+
+                _log.Warn($"Failed to assign role to user with ID {assignRoleDto.UserId}.");
                 return BadRequest("Failed to assign role.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _log.Error($"Error occurred while assigning role to user with ID {assignRoleDto.UserId}.", ex);
+                return StatusCode(500, "An error occurred while assigning the role. Please try again later.");
             }
         }
 
@@ -62,7 +68,8 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _log.Error("Error occurred while generating reports.", ex);
+                return StatusCode(500, "An error occurred while generating reports. Please try again later.");
             }
         }
     }

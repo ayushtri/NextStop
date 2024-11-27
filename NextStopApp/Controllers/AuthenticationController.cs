@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using log4net;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NextStopApp.DTOs;
@@ -19,6 +20,7 @@ namespace NextStopApp.Controllers
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(AuthenticationController));
 
         public AuthenticationController(IUserService userService, ITokenService tokenService, IConfiguration configuration)
         {
@@ -57,6 +59,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred during login process.", ex);
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -102,6 +105,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred during user registration.", ex);
                 return StatusCode(500, "Internal server error. Registration failed.");
             }
         }
@@ -164,6 +168,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred during refresh token generation.", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -197,6 +202,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred during refresh token revocation.", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -229,6 +235,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred during user logout.", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

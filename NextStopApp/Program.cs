@@ -1,4 +1,6 @@
 
+using log4net.Config;
+using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -43,6 +45,8 @@ namespace NextStopApp
                };
            });
 
+            XmlConfigurator.Configure(new FileInfo("log4net.config"));
+
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IBusService, BusService>();
@@ -53,6 +57,7 @@ namespace NextStopApp
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();

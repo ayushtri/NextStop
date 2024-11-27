@@ -144,5 +144,22 @@ namespace NextStopApp.Repositories
             };
         }
 
+        public async Task<IEnumerable<BusOperatorDTO>> ViewAllOperators()
+        {
+           
+            var busOperators = await _context.BusOperators
+                                              .Select(o => new BusOperatorDTO
+                                              {
+                                                  OperatorId = o.OperatorId,
+                                                  Name = o.Name,
+                                                  Email = o.Email,
+                                                  ContactNumber = o.ContactNumber,
+                                                  Address = o.Address
+                                              })
+                                              .ToListAsync();
+
+            return busOperators;
+        }
+
     }
 }

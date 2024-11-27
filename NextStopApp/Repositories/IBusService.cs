@@ -12,5 +12,6 @@ namespace NextStopApp.Repositories
         Task DeleteBus(int busId);
         Task<BusOperator> GetBusOperatorByEmail(string email);
         Task<BusDTO> GetBusByBusNumber(string busNumber);
+        Task<IEnumerable<BusOperatorDTO>> ViewAllOperators();
     }
 }

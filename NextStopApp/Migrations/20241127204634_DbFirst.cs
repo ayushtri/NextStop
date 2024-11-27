@@ -28,6 +28,21 @@ namespace NextStopApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Routes",
                 columns: table => new
                 {
@@ -35,7 +50,7 @@ namespace NextStopApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Origin = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Destination = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Distance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Distance = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     EstimatedTime = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -54,7 +69,8 @@ namespace NextStopApp.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "passenger")
+                    Role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "passenger"),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,6 +124,28 @@ namespace NextStopApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    SentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NotificationType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
@@ -117,7 +155,7 @@ namespace NextStopApp.Migrations
                     RouteId = table.Column<int>(type: "int", nullable: false),
                     DepartureTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Fare = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Fare = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -146,7 +184,7 @@ namespace NextStopApp.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ScheduleId = table.Column<int>(type: "int", nullable: false),
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalFare = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalFare = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "confirmed")
                 },
                 constraints: table =>
@@ -174,7 +212,7 @@ namespace NextStopApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookingId = table.Column<int>(type: "int", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -241,6 +279,17 @@ namespace NextStopApp.Migrations
                 column: "OperatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BusOperators_Email",
+                table: "BusOperators",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_BookingId",
                 table: "Payments",
                 column: "BookingId",
@@ -274,7 +323,13 @@ namespace NextStopApp.Migrations
                 name: "AdminActions");
 
             migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
                 name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "Seats");

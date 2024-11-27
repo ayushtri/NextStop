@@ -12,8 +12,8 @@ using NextStopApp.Data;
 namespace NextStopApp.Migrations
 {
     [DbContext(typeof(NextStopDbContext))]
-    [Migration("20241125062830_AddNotificationsTable")]
-    partial class AddNotificationsTable
+    [Migration("20241127204634_DbFirst")]
+    partial class DbFirst
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

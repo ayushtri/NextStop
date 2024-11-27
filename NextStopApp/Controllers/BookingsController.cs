@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
@@ -12,6 +13,7 @@ namespace NextStopApp.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService _bookingService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(BookingsController));
 
         public BookingsController(IBookingService bookingService)
         {
@@ -28,6 +30,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while searching for buses.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -42,6 +45,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while booking a ticket.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -61,6 +65,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while cancelling booking with ID {bookingId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -75,6 +80,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while viewing bookings for user ID {userId}.", ex);
                 return BadRequest(ex.Message);
             }
         }

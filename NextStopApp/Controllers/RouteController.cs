@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
@@ -12,6 +13,7 @@ namespace NextStopApp.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteService _routeService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(RouteController));
 
         public RouteController(IRouteService routeService)
         {
@@ -37,6 +39,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while adding route.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -60,6 +63,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while updating route with ID {routeId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -79,6 +83,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while deleting route with ID {routeId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -93,6 +98,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while fetching all routes.", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

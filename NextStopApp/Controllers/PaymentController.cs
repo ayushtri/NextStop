@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
 using NextStopApp.Repositories;
@@ -11,6 +12,7 @@ namespace NextStopApp.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(PaymentController));
 
         public PaymentController(IPaymentService paymentService)
         {
@@ -28,6 +30,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while initiating payment.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -43,6 +46,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while fetching payment status for booking ID {bookingId}.", ex);
                 return NotFound(ex.Message);
             }
         }

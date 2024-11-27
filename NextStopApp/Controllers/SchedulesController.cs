@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
@@ -12,6 +13,7 @@ namespace NextStopApp.Controllers
     public class SchedulesController : ControllerBase
     {
         private readonly ISchedulesService _schedulesService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(SchedulesController));
 
         public SchedulesController(ISchedulesService schedulesService)
         {
@@ -29,7 +31,6 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdSchedule = await _schedulesService.AddSchedule(scheduleDto);
-
                 return Ok(new
                 {
                     Message = "Schedule added successfully",
@@ -38,6 +39,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while adding schedule.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -61,6 +63,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while updating schedule with ID {scheduleId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -80,6 +83,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while deleting schedule with ID {scheduleId}.", ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -94,6 +98,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while fetching schedules.", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NextStopApp.DTOs;
@@ -12,6 +13,7 @@ namespace NextStopApp.Controllers
     public class BusController : ControllerBase
     {
         private readonly IBusService _busService;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(BusController));
 
         public BusController(IBusService busService)
         {
@@ -30,7 +32,6 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdOperator = await _busService.RegisterBusOperator(operatorDto);
-
                 return Ok(new
                 {
                     Message = "Bus operator registered successfully",
@@ -39,11 +40,10 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while registering bus operator.", ex);  
                 return BadRequest(ex.Message);
             }
         }
-
-
 
         [HttpPost("AddBus")]
         [Authorize(Roles = "operator,admin")]
@@ -57,7 +57,6 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdBus = await _busService.AddBus(busDto);
-
                 return Ok(new
                 {
                     Message = "Bus added successfully",
@@ -66,11 +65,10 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error("Error occurred while adding a bus.", ex); 
                 return BadRequest(ex.Message);
             }
         }
-
-
 
         [HttpPut("UpdateBus/{busId}")]
         public async Task<IActionResult> UpdateBus(int busId, [FromBody] BusUpdateDTO updateBusDto)
@@ -82,6 +80,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while updating bus with ID {busId}.", ex); 
                 return NotFound(ex.Message);
             }
         }
@@ -96,6 +95,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while deleting bus with ID {busId}.", ex);  
                 return NotFound(ex.Message);
             }
         }
@@ -103,8 +103,16 @@ namespace NextStopApp.Controllers
         [HttpGet("ViewBuses/{operatorId}")]
         public async Task<IActionResult> ViewBuses(int operatorId)
         {
-            var buses = await _busService.GetBusesByOperatorId(operatorId);
-            return Ok(buses);
+            try
+            {
+                var buses = await _busService.GetBusesByOperatorId(operatorId);
+                return Ok(buses);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error occurred while fetching buses for operator ID {operatorId}.", ex); 
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetOperatorByEmail")]
@@ -123,6 +131,7 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while fetching bus operator by email {email}.", ex);  
                 return NotFound(ex.Message);
             }
         }
@@ -142,9 +151,24 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error($"Error occurred while fetching bus with number {busNumber}.", ex);  
                 return NotFound(ex.Message);
             }
         }
 
+        [HttpGet("ViewAllOperators")]
+        public async Task<IActionResult> ViewAllOperators()
+        {
+            try
+            {
+                var operators = await _busService.ViewAllOperators();
+                return Ok(operators);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error occurred while viewing all operators.", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
