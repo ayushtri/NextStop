@@ -19,7 +19,6 @@ namespace NextStopApp.Controllers
             _adminDashboardService = adminDashboardService;
         }
 
-        // 8.1 View All Users API
         [HttpGet("ViewAllUsers")]
         public async Task<IActionResult> ViewAllUsers()
         {
@@ -35,7 +34,6 @@ namespace NextStopApp.Controllers
             }
         }
 
-        // 8.2 Assign Role API
         [HttpPost("AssignRole")]
         public async Task<IActionResult> AssignRole([FromBody] AssignRoleDTO assignRoleDto)
         {

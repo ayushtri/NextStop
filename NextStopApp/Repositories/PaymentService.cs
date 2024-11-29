@@ -24,7 +24,6 @@ namespace NextStopApp.Repositories
             // Process the payment (mock payment for now)
             var paymentStatus = initiatePaymentDto.PaymentStatus.ToLower() == "successful" ? "successful" : "failed";
 
-            // Create a new payment record
             var payment = new Payment
             {
                 BookingId = initiatePaymentDto.BookingId,

@@ -19,7 +19,6 @@ namespace NextStopApp.Controllers
             _paymentService = paymentService;
         }
 
-        // 7.1 Initiate Payment API
         [HttpPost("InitiatePayment")]
         public async Task<IActionResult> InitiatePayment([FromBody] InitiatePaymentDTO initiatePaymentDto)
         {
@@ -35,7 +34,6 @@ namespace NextStopApp.Controllers
             }
         }
 
-        // 7.2 View Payment Status API
         [HttpGet("PaymentStatus/{bookingId}")]
         public async Task<IActionResult> ViewPaymentStatus(int bookingId)
         {

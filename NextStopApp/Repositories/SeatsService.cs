@@ -28,7 +28,7 @@ namespace NextStopApp.Repositories
                 .Select(seat => seat.SeatNumber)
                 .ToListAsync();
 
-            return availableSeats; // Return list of seat numbers as strings
+            return availableSeats; 
         }
 
         public async Task<bool> ReserveSeats(ReserveSeatsDTO reserveSeatsDto)

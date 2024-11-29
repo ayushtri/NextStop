@@ -30,7 +30,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error("Error occurred while retrieving all users.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -50,7 +49,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error($"Error occurred while retrieving user with ID {userId}.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -84,7 +82,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error($"Error occurred while updating user with ID {userId}.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -117,7 +114,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error($"Error occurred while resetting email for user with ID {userId}.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -150,7 +146,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error($"Error occurred while resetting password for user with ID {userId}.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -180,7 +175,6 @@ namespace NextStopApp.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 _log.Error($"Error occurred while deleting user with ID {userId}.", ex);
                 return StatusCode(500, "Internal server error");
             }

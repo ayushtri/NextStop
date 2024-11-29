@@ -18,7 +18,6 @@ namespace NextStopApp.Repositories
             _context = context;
         }
 
-        // 8.1 View All Users API
         public async Task<IEnumerable<UserDTO>> ViewAllUsers()
         {
             var users = await _context.Users.ToListAsync();
@@ -34,7 +33,6 @@ namespace NextStopApp.Repositories
             });
         }
 
-        // 8.2 Assign Role API
         public async Task<bool> AssignRole(AssignRoleDTO assignRoleDto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == assignRoleDto.UserId);
@@ -46,10 +44,8 @@ namespace NextStopApp.Repositories
             return true;
         }
 
-        // 8.3 Generate Reports API
         public async Task<ReportDTO> GenerateReports(GenerateReportsDTO reportDto)
         {
-            // Query bookings based on filters: start date, end date, route, and operator
             var bookingsQuery = _context.Bookings
                 .Include(b => b.Schedule)
                     .ThenInclude(s => s.Route)
@@ -61,7 +57,6 @@ namespace NextStopApp.Repositories
                             (b.Schedule.Route.Origin == reportDto.Route || b.Schedule.Route.Destination == reportDto.Route) && // Check Origin OR Destination
                             b.Schedule.Bus.Operator.Name == reportDto.Operator);
 
-            // Fetch bookings matching the filters
             var bookings = await bookingsQuery.ToListAsync();
 
             // Calculate total bookings and revenue
