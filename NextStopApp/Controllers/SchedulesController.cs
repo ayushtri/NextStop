@@ -31,7 +31,7 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdSchedule = await _schedulesService.AddSchedule(scheduleDto);
-                return Ok(new
+                return Ok(new AddScheduleResponseDTO
                 {
                     Message = "Schedule added successfully",
                     Schedule = createdSchedule
@@ -55,7 +55,7 @@ namespace NextStopApp.Controllers
             try
             {
                 var updatedSchedule = await _schedulesService.UpdateSchedule(scheduleId, scheduleDto);
-                return Ok(new
+                return Ok(new UpdateScheduleResponseDTO
                 {
                     Message = "Schedule updated successfully",
                     Schedule = updatedSchedule

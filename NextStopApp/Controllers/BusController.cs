@@ -32,18 +32,23 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdOperator = await _busService.RegisterBusOperator(operatorDto);
-                return Ok(new
+
+                // Create the response DTO
+                var response = new BusOperatorResponseDTO
                 {
                     Message = "Bus operator registered successfully",
                     Operator = createdOperator
-                });
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.Error("Error occurred while registering bus operator.", ex);  
+                _log.Error("Error occurred while registering bus operator.", ex);
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpPost("AddBus")]
         [Authorize(Roles = "operator,admin")]
@@ -57,7 +62,7 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdBus = await _busService.AddBus(busDto);
-                return Ok(new
+                return Ok(new BusResponseDTO
                 {
                     Message = "Bus added successfully",
                     Bus = createdBus

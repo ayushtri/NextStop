@@ -31,7 +31,7 @@ namespace NextStopApp.Controllers
             try
             {
                 var createdRoute = await _routeService.AddRoute(routeDto);
-                return Ok(new
+                return Ok(new RouteResponseDTO
                 {
                     Message = "Route added successfully",
                     Route = createdRoute
@@ -55,7 +55,7 @@ namespace NextStopApp.Controllers
             try
             {
                 var updatedRoute = await _routeService.UpdateRoute(routeId, routeDto);
-                return Ok(new
+                return Ok(new RouteResponseDTO
                 {
                     Message = "Route updated successfully",
                     Route = updatedRoute

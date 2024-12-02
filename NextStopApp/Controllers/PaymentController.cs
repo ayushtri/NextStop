@@ -22,6 +22,11 @@ namespace NextStopApp.Controllers
         [HttpPost("InitiatePayment")]
         public async Task<IActionResult> InitiatePayment([FromBody] InitiatePaymentDTO initiatePaymentDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); 
+            }
+
             try
             {
                 var paymentStatus = await _paymentService.InitiatePayment(initiatePaymentDto);
@@ -33,6 +38,7 @@ namespace NextStopApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpGet("PaymentStatus/{bookingId}")]
         public async Task<IActionResult> ViewPaymentStatus(int bookingId)
